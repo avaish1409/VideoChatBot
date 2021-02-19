@@ -41,4 +41,4 @@ See release notes for changes https://github.com/avaish1409/VideoChatBot/release
 
 # License
 
-VideoChatBot is licensed under the [BSD 3-clause license](https://opensource.org/licenses/BSD-3-Clause).
+VideoChatBot is licensed under the [GNU General Public License v3.0](https://github.com/avaish1409/VideoChatBot/blob/main/LICENSE).
