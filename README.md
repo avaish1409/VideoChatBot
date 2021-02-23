@@ -13,7 +13,7 @@ An istance of vcbot starts with default chat data as its training set. The run f
 This package can be installed from [PyPi](https://pypi.python.org/pypi/VideoChatBot) by running:
 
 ```
-pip install videochatbot
+pip install VideoChatBot
 ```
 
 ## Basic Usage
