@@ -3,6 +3,7 @@
 VideoChatBot is a library that gives python users an interaction utility that works as a videocall to a bot.
 
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
+![Join the chat at https://gitter.im/VideoChatBot/community](https://badges.gitter.im/chatterbot/Lobby.svg)
 
 ## How it works
 
