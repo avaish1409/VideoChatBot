@@ -16,6 +16,11 @@ This package can be installed from [PyPi](https://pypi.python.org/pypi/VideoChat
 ```
 pip install VideoChatBot
 ```
+or
+```
+pip install https://files.pythonhosted.org/packages/5b/cc/9dbb790525fe3daa8f0822e60eec38dfea8af5e33af0334dc66b4a022ac4/VideoChatBot-0.0.2.tar.gz
+```
+
 
 ## Basic Usage
 
