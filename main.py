@@ -60,7 +60,7 @@ class vcbot():
         self.trainer = ChatterBotCorpusTrainer(self.chatbot)
 
         self.trainer.train(
-            "./resources/my_export.json"
+            "https://raw.githubusercontent.com/avaish1409/VideoChatBot/main/resources/my_export.json"
         )
         # speak
         self.engine = pyttsx3.init() 
