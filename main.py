@@ -127,7 +127,7 @@ class vcbot():
     
     def vid(self, lock):
         # use gif for displaying reply to user
-        gif = imageio.mimread('resources/boy-talk.gif')
+        gif = imageio.mimread('https://raw.githubusercontent.com/avaish1409/VideoChatBot/customizable-vcbot/resources/boy-talk.gif')
         nums = len(gif)
         imgs = [cv2.cvtColor(img, cv2.COLOR_RGB2BGR) for img in gif]
         i = 0
