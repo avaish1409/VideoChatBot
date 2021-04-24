@@ -1,14 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
-# imports
-
-#audio to text
-import speech_recognition as sr 
-import pyttsx3 
+# audio to text
+import speech_recognition as sr
+import pyttsx3
 
 # text to emotion
 from text2emotion import get_emotion
@@ -19,12 +14,12 @@ from chatterbot.trainers import ListTrainer
 from chatterbot.trainers import ChatterBotCorpusTrainer
 
 # display reply
-import threading 
+import threading
 # import pyglet
 
 # user emotion
 from fer import FER
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 import cv2
 import os
 
@@ -36,21 +31,14 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-# extras - for video
-import tensorflow as tf
-
-
-# In[2]:
-
 
 # simple video-chat-bot
-
-class vcbot():
+class VCBot():
     def __init__(self):
         # flag - false if vcbot is diplaying reply (speaking something)
         global flag
         flag = True
-        self.r = sr.Recognizer() 
+        self.r = sr.Recognizer()
 
         # Chatbot
         self.chatbot = ChatBot(
@@ -60,13 +48,20 @@ class vcbot():
         self.trainer = ChatterBotCorpusTrainer(self.chatbot)
 
         self.trainer.train(
-            "https://raw.githubusercontent.com/avaish1409/VideoChatBot/main/resources/my_export.json"
+            *self.get_samples()
         )
         # speak
-        self.engine = pyttsx3.init() 
+        self.engine = pyttsx3.init()
         self.engine.setProperty('rate', 145)
         logger.info("VCbot initialized")
-        
+
+    def get_samples(self):
+        __dir__ = os.path.dirname(os.path.realpath('__dir__'))
+        sample_dir = os.path.join(__dir__, 'resources', 'samples')
+        sample_list = [os.path.join(sample_dir, file)
+                       for file in os.listdir(sample_dir)]
+        return sample_list
+
     def getUserEmotion(self):
         # detector for facial emotion
         detector = FER(mtcnn=True)
@@ -76,58 +71,58 @@ class vcbot():
         img = plt.imread('temp.jpeg')
         res = detector.detect_emotions(img)
         os.remove('temp.jpeg')
-        if len(res)==0:
+        if len(res) == 0:
             logger.info("No face detected")
             return 'neutral'
         res_emotion = res[0]['emotions']
         return max(res_emotion, key=res_emotion.get)
-    
+
     def audioToText(self):
         # convert user audio to text (language = english)
-        try: 
+        try:
+            # use the microphone as source for input.
+            with sr.Microphone() as source2:
 
-            # use the microphone as source for input. 
-            with sr.Microphone() as source2: 
+                # wait for a second to let the recognizer
+                # adjust the energy threshold based on
+                # the surrounding noise level
+                self.r.adjust_for_ambient_noise(source2, duration=0.2)
 
-                # wait for a second to let the recognizer 
-                # adjust the energy threshold based on 
-                # the surrounding noise level 
-                self.r.adjust_for_ambient_noise(source2, duration=0.2) 
+                # listens for the user's input
+                audio2 = self.r.listen(source2)
 
-                #listens for the user's input 
-                audio2 = self.r.listen(source2) 
-
-                # Using ggogle to recognize audio 
-                MyText = self.r.recognize_google(audio2) 
-                MyText = MyText.lower() 
+                # Using ggogle to recognize audio
+                MyText = self.r.recognize_google(audio2)
+                MyText = MyText.lower()
 
                 return MyText
 
-        except sr.RequestError as e: 
-            print("Could not request results; {0}".format(e)) 
-            logger.warning("Aud2text: Could not request results; {0}".format(e))
+        except sr.RequestError as e:
+            print("Could not request results; {0}".format(e))
+            logger.warning(
+                "Aud2text: Could not request results; {0}".format(e))
             return 'error'
 
-        except sr.UnknownValueError: 
-            print("unknown error occured") 
+        except sr.UnknownValueError:
+            print("unknown error occured")
             logger.warning("Aud2text: unknown error occured")
             return 'error'
-        
+
     def getTextEmotion(self, t):
         # derive emotion from any text input
         res = get_emotion(t)
-        emotion = max(res, key = res.get)
+        emotion = max(res, key=res.get)
         if res[emotion] == 0:
             return 'neutral'
         return emotion.lower()
-    
+
     def getChatReply(self, q):
         # chatterbot reply for given text input
         return str(self.chatbot.get_response(q))
-    
+
     def vid(self, lock):
         # use gif for displaying reply to user
-        gif = imageio.mimread('https://raw.githubusercontent.com/avaish1409/VideoChatBot/customizable-vcbot/resources/boy-talk.gif')
+        gif = imageio.mimread('./resources/boy-talk.gif')
         nums = len(gif)
         imgs = [cv2.cvtColor(img, cv2.COLOR_RGB2BGR) for img in gif]
         i = 0
@@ -141,7 +136,7 @@ class vcbot():
                 # gif enabled for speaking
                 cv2.imshow("gif", imgs[i])
             lock.release()
-            pressed = cv2.waitKey(25)&0xFF
+            pressed = cv2.waitKey(25) & 0xFF
             if pressed == ord('q'):
                 # quit
                 logger.info("user requested to quit!")
@@ -151,15 +146,14 @@ class vcbot():
                 lock.acquire()
                 flag = not flag
                 lock.release()
-            i = (i+1)%nums
+            i = (i+1) % nums
         cv2.destroyAllWindows()
 
+    def SpeakText(self, command):
+        # Initialize the engine to speak
+        self.engine.say(command)
+        self.engine.runAndWait()
 
-    def SpeakText(self, command): 
-        #Initialize the engine to speak
-        self.engine.say(command) 
-        self.engine.runAndWait()     
-        
     def ensemble(self, lock):
         # combined together: video-emotion, audio-to-text, text-emotion, emotion validation, chat-reply, speak-reply
         txt = ''
@@ -192,35 +186,29 @@ class vcbot():
             lock.release()
 
     def run(self):
-        #thread lock for critical section
+        # thread lock for critical section
         lock = threading.Lock()
 
-        # creating thread 
+        # creating thread
         # thread 1: display gif
-        t1 = threading.Thread(target = self.vid, args=(lock,)) 
+        t1 = threading.Thread(target=self.vid, args=(lock,))
         # thread2: ensemble
-        t2 = threading.Thread(target = self.ensemble, args=(lock,)) 
+        t2 = threading.Thread(target=self.ensemble, args=(lock,))
 
-        # starting thread 1 
-        t1.start() 
-        # starting thread 2 
-        t2.start() 
+        # starting thread 1
+        t1.start()
+        # starting thread 2
+        t2.start()
 
-        # wait until thread 1 is completely executed 
+        # wait until thread 1 is completely executed
         t1.join()
-        # wait until thread 2 is completely executed 
-        t2.join() 
+        # wait until thread 2 is completely executed
+        t2.join()
 
-        # both threads completely executed 
+        # both threads completely executed
         print("Done!")
         logger.info("Successfully completed execution, terminating vcbot!")
         return
-    
-    
 
 
-# In[3]:
-
-
-# vcbot().run()
-
+# VCBot().run()
