@@ -1,11 +1,6 @@
-# Extra rules from https://github.com/github/gitignore/
-# Python rules
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Environments
 .env
 .venv
 env/
@@ -13,10 +8,12 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
-# Django stuff:
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-shm
 db.sqlite3-wal
+.idea/
+.vscode/
+*.pyc
+*.egg-info
