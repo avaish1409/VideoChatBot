@@ -12,7 +12,7 @@ setup(
     author='Anirudh Vaish',
     author_email='anirudhvaish147@gmail.com',
     url='https://github.com/avaish1409/VideoChatBot',
-    description='A python based command line tool to compare Github Users or Repositories.',
+    description='A library that gives python users an interaction utility that works as a videocall to a bot.',
     long_description=long_description,
     long_description_content_type="text/markdown",
     license='GNU General Public License v3 (GPLv3)',
