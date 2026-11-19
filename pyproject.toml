@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "VideoChatBot"
+version = "1.0.0"
+description = "A multimodal interactive video chatbot featuring real-time facial emotion recognition, speech transcription, and animated avatar display."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "GPL-3.0-only" }
+authors = [
+    { name = "VideoChatBot Contributors" }
+]
+dependencies = [
+    "opencv-python>=4.8.0",
+    "numpy>=1.24.0",
+    "imageio>=2.30.0",
+    "pyttsx3>=2.99",
+    "sounddevice>=0.4.6",
+    "faster-whisper>=1.0.0",
+    "onnxruntime>=1.15.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+]
+
+[project.scripts]
+video-chatbot = "main:VCBot"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]
+testpaths = ["tests"]
+
